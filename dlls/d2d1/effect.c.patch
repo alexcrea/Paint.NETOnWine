@@ -197,7 +197,7 @@ index b66fe731523..6eed80b8871 100644
 -            || IsEqualGUID(iid, &IID_IUnknown))
 +    if (IsEqualGUID(iid, &IID_ID2D1EffectContext) ||
 +            IsEqualGUID(iid, &IID_ID2D1EffectContext1) ||
-+            IsEqualGUID(iid, &IID_ID2D1EffectContext2) ||
++            IsEqualGUID(iid, &IID_ID2D1EffectContext2) || //TODO: we don't implement 1 or 2 yet
 +            IsEqualGUID(iid, &IID_IUnknown))
      {
          ID2D1EffectContext_AddRef(iface);

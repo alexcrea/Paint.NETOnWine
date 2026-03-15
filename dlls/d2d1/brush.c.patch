@@ -8,7 +8,7 @@ index 50754a2f21a..31431fac0f8 100644
  
 -    if (IsEqualGUID(iid, &IID_ID2D1GradientStopCollection)
 +    if (IsEqualGUID(iid, &IID_ID2D1GradientStopCollection) ||
-+        IsEqualGUID(iid, &IID_ID2D1GradientStopCollection1) 
++        IsEqualGUID(iid, &IID_ID2D1GradientStopCollection1) //TODO: we don't actually implement this yet, we just say we do.
              || IsEqualGUID(iid, &IID_ID2D1Resource)
              || IsEqualGUID(iid, &IID_IUnknown))
      {

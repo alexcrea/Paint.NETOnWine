@@ -55,7 +55,7 @@ index 00000000000..4cf4b6a9e6f
 +        IsEqualIID( iid, &IID_IInspectable) ||
 +        IsEqualIID( iid, &IID_IDispatcherQueue ) || 
 +        IsEqualIID( iid, &IID_IDispatcherQueue2 ))
-+    {
++    { //TODO, we dont actually implement DispatcherQueue2, we just say we do
 +        IDispatcherQueue_AddRef( iface );
 +        *obj = iface;
 +        return S_OK;

@@ -112,7 +112,7 @@ index 2744d758e91..9a439bbe615 100644
 +    struct compositor_controller *impl = impl_from_ICompositorController( iface );
 +    TRACE( "STUB iface %p. \n", iface);
 +    //compositor_controller_create((ICompositorController**) value);
-+    *value = (__x_ABI_CWindows_CUI_CComposition_CICompositor *) iface;
++    *value = (__x_ABI_CWindows_CUI_CComposition_CICompositor *) iface; //TODO: this is here just so the pointer isnt null. this WILL segfault. need to actually implement compositor
 +    return S_OK;
 +}
 +

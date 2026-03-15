@@ -7,7 +7,7 @@ index 00000000000..aee78ebdbdd
 +/*
 + * Runtime Classes for dcomp.dll
 + *
-+ * Copyright (C) 2025 Mohamad Al-Jaf
++ * Copyright (C) 2025 
 + *
 + * This library is free software; you can redistribute it and/or
 + * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ index 00000000000..aee78ebdbdd
 +#pragma makedep register
 +#pragma winrt ns_prefix
 +
-+//import "windows.system.idl";
++import "windows.ui.composition.core.idl";
 +
 +namespace Windows.UI.Composition.Core {
 +    runtimeclass CompositorController;
