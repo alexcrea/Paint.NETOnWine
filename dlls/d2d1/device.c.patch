@@ -170,7 +170,7 @@ index 74607dc8ea4..4b57fd9fe33 100644
 +
 +static HRESULT d2d_color_context_create( ID2D1ColorContext1 **obj , ID2D1Factory* factory)
 +{
-+    struct d2d_color_context *This = malloc( sizeof(*This) );
++    struct d2d_color_context *This = calloc( sizeof(*This), 1 );
 +
 +    if (!This)
 +        return E_OUTOFMEMORY;

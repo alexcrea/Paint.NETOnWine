@@ -165,7 +165,7 @@ index 2744d758e91..9a439bbe615 100644
 +
 +static HRESULT compositor_controller_create(ICompositorController **obj)
 +{
-+    struct compositor_controller *This = malloc( sizeof(*This) );
++    struct compositor_controller *This = calloc( sizeof(*This), 1 );
 +
 +    if (!This)
 +        return E_OUTOFMEMORY;

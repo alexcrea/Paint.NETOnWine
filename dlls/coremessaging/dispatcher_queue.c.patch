@@ -159,7 +159,7 @@ index 00000000000..4cf4b6a9e6f
 +
 +static HRESULT dispatcher_queue_create(IDispatcherQueue **obj)
 +{
-+    struct dispatcher_queue *This = malloc( sizeof(*This) );
++    struct dispatcher_queue *This = calloc( sizeof(*This), 1);
 +
 +    if (!This)
 +        return E_OUTOFMEMORY;

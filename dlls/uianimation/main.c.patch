@@ -580,7 +580,7 @@ index 22bb58ddbe2..8c6c9ab23bb 100644
 +    therefore none of the transition library transitions are actually implemented,
 +    and are only faked using their final values and forced disabled uianimations
 +    */
-+    struct transition *This = malloc( sizeof(*This) );
++    struct transition *This = calloc( sizeof(*This), 1 );
 +
 +    if (!This)
 +        return E_OUTOFMEMORY;
