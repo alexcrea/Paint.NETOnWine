@@ -1,0 +1,30 @@
+diff --git a/dlls/dwrite/layout.c b/dlls/dwrite/layout.c
+index e362aba59ef..8901b39d03b 100644
+--- a/dlls/dwrite/layout.c
++++ b/dlls/dwrite/layout.c
+@@ -2932,10 +2932,12 @@ static void free_layout_ranges_list(struct dwrite_textlayout *layout)
+         free_layout_range(cur);
+     }
+ 
++    /* Sometimes illegal access on remove and free
+     LIST_FOR_EACH_ENTRY_SAFE(cur, cur2, &layout->underline_ranges, struct layout_range_header, entry) {
+         list_remove(&cur->entry);
+         free_layout_range(cur);
+     }
++    */
+ 
+     LIST_FOR_EACH_ENTRY_SAFE(cur, cur2, &layout->strike_ranges, struct layout_range_header, entry) {
+         list_remove(&cur->entry);
+@@ -2952,10 +2954,12 @@ static void free_layout_ranges_list(struct dwrite_textlayout *layout)
+         free_layout_range(cur);
+     }
+ 
++    /* Same as above but less often ?
+     LIST_FOR_EACH_ENTRY_SAFE(cur, cur2, &layout->typographies, struct layout_range_header, entry) {
+         list_remove(&cur->entry);
+         free_layout_range(cur);
+     }
++    */
+ }
+ 
+ static struct layout_range_header *find_outer_range(struct list *ranges, const DWRITE_TEXT_RANGE *range)
