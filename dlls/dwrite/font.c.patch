@@ -1,0 +1,14 @@
+diff --git a/dlls/dwrite/font.c b/dlls/dwrite/font.c
+index f207bade10e..e3ab3965ecd 100644
+--- a/dlls/dwrite/font.c
++++ b/dlls/dwrite/font.c
+@@ -5962,6 +5962,9 @@ static HRESULT glyphrunanalysis_render(struct dwrite_glyphrunanalysis *analysis)
+         /* blit to analysis bitmap */
+         dst = get_pixel_ptr(analysis->bitmap, analysis->texture_type, bbox, &analysis->bounds);
+ 
++        /* need to find out why it can happen */
++        if (dst < analysis->bitmap) continue;
++
+         if (is_1bpp) {
+             /* convert 1bpp to 8bpp/24bpp */
+             if (analysis->texture_type == DWRITE_TEXTURE_CLEARTYPE_3x1) {
