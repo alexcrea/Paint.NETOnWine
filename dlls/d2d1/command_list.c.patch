@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/command_list.c b/dlls/d2d1/command_list.c
-index 34242ddd88a..e6ce998bb61 100644
+index 34242ddd88a..11473861078 100644
 --- a/dlls/d2d1/command_list.c
 +++ b/dlls/d2d1/command_list.c
 @@ -474,8 +474,8 @@ static HRESULT STDMETHODCALLTYPE d2d_command_list_Close(ID2D1CommandList *iface)
@@ -13,3 +13,53 @@ index 34242ddd88a..e6ce998bb61 100644
  
      command_list->state = D2D_COMMAND_LIST_STATE_CLOSED;
  
+@@ -1098,3 +1098,49 @@ void d2d_command_list_fill_opacity_mask(struct d2d_command_list *command_list, c
+     d2d_command_list_write_field(&data, &command->dst_rect, dst_rect, sizeof(*dst_rect));
+     d2d_command_list_write_field(&data, &command->src_rect, src_rect, sizeof(*src_rect));
+ }
++
++void d2d_command_list_draw_command(const struct d2d_command *command, struct d2d_device_context *context,
++        const D2D1_RECT_F *dst_rect, float opacity, D2D1_INTERPOLATION_MODE interpolation_mode,
++        const D2D1_RECT_F *src_rect, const D2D1_POINT_2F *offset,
++        const D2D1_MATRIX_4X4_F *perspective_transform) {
++
++    FIXME("command %p, context %p, dst_rect %s, opacity %.8e, interpolation_mode %#x, src_rect %s, offset %p, perspective_transform %p.\n",
++            command, context, debug_d2d_rect_f(dst_rect), opacity, interpolation_mode, debug_d2d_rect_f(src_rect), offset, perspective_transform);
++
++    switch (command->op)
++    {
++        default:
++            FIXME("Unhandled command %u.\n", command->op);
++    }
++
++
++}
++
++void d2d_command_list_draw(ID2D1CommandList *iface, struct d2d_device_context *context,
++        const D2D1_RECT_F *dst_rect, float opacity, D2D1_INTERPOLATION_MODE interpolation_mode,
++        const D2D1_RECT_F *src_rect, const D2D1_POINT_2F *offset,
++        const D2D1_MATRIX_4X4_F *perspective_transform) {
++    struct d2d_command_list *command_list = impl_from_ID2D1CommandList(iface);
++    const void *data, *end;
++
++    TRACE("iface %p, context %p, dst_rect %s, opacity %.8e, interpolation_mode %#x, src_rect %s, offset %p, perspective_transform %p.\n",
++            iface, context, debug_d2d_rect_f(dst_rect), opacity, interpolation_mode, debug_d2d_rect_f(src_rect), offset, perspective_transform);
++
++    if (command_list->state != D2D_COMMAND_LIST_STATE_CLOSED) return;
++
++    data = command_list->data;
++    end = (char *)command_list->data + command_list->size;
++    while (data < end)
++    {
++        const struct d2d_command *command = data;
++
++        d2d_command_list_draw_command(command, context, dst_rect, opacity, interpolation_mode, src_rect, offset, perspective_transform);
++
++        data = (char *)data + command->size;
++    }
++
++
++
++}
++
++
