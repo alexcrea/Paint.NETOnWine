@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/command_list.c b/dlls/d2d1/command_list.c
-index 34242ddd88a..11473861078 100644
+index 34242ddd88a..aba9c4c7f96 100644
 --- a/dlls/d2d1/command_list.c
 +++ b/dlls/d2d1/command_list.c
 @@ -474,8 +474,8 @@ static HRESULT STDMETHODCALLTYPE d2d_command_list_Close(ID2D1CommandList *iface)
@@ -13,37 +13,93 @@ index 34242ddd88a..11473861078 100644
  
      command_list->state = D2D_COMMAND_LIST_STATE_CLOSED;
  
-@@ -1098,3 +1098,49 @@ void d2d_command_list_fill_opacity_mask(struct d2d_command_list *command_list, c
+@@ -1098,3 +1098,100 @@ void d2d_command_list_fill_opacity_mask(struct d2d_command_list *command_list, c
      d2d_command_list_write_field(&data, &command->dst_rect, dst_rect, sizeof(*dst_rect));
      d2d_command_list_write_field(&data, &command->src_rect, src_rect, sizeof(*src_rect));
  }
 +
-+void d2d_command_list_draw_command(const struct d2d_command *command, struct d2d_device_context *context,
-+        const D2D1_RECT_F *dst_rect, float opacity, D2D1_INTERPOLATION_MODE interpolation_mode,
-+        const D2D1_RECT_F *src_rect, const D2D1_POINT_2F *offset,
-+        const D2D1_MATRIX_4X4_F *perspective_transform) {
-+
-+    FIXME("command %p, context %p, dst_rect %s, opacity %.8e, interpolation_mode %#x, src_rect %s, offset %p, perspective_transform %p.\n",
-+            command, context, debug_d2d_rect_f(dst_rect), opacity, interpolation_mode, debug_d2d_rect_f(src_rect), offset, perspective_transform);
++void d2d_command_list_draw_command(const struct d2d_command *command, struct d2d_device_context *context) {
++    TRACE("command %p, context %p\n", command, context);
 +
 +    switch (command->op)
 +    {
++        case D2D_COMMAND_SET_ANTIALIAS_MODE:
++        {
++            const struct d2d_command_set_antialias_mode *c = (void *) command;
++            ID2D1DeviceContext6_SetAntialiasMode(&context->ID2D1DeviceContext6_iface, c->mode);
++            break;
++        }
++        case D2D_COMMAND_SET_TEXT_RENDERING_PARAMS:
++        {
++            const struct d2d_command_set_text_rendering_params *c = (void *) command;
++            ID2D1DeviceContext6_SetTextRenderingParams(&context->ID2D1DeviceContext6_iface, c->params);
++            break;
++        }
++        case D2D_COMMAND_SET_TRANSFORM:
++        {
++            const struct d2d_command_set_transform *c = (void *) command;
++            ID2D1DeviceContext6_SetTransform(&context->ID2D1DeviceContext6_iface, &c->transform);
++            break;
++        }
++        case D2D_COMMAND_CLEAR:
++        {
++            const struct d2d_command_clear *c = (void *) command;
++            ID2D1DeviceContext6_Clear(&context->ID2D1DeviceContext6_iface, &c->color);
++            break;
++        }
++        case D2D_COMMAND_DRAW_GLYPH_RUN:
++        {
++            const struct d2d_command_draw_glyph_run *c = (void *) command;
++            ID2D1DeviceContext6_DrawGlyphRun(&context->ID2D1DeviceContext6_iface, c->origin, &c->run, c->run_desc, c->brush, c->measuring_mode);
++            break;
++        }
++        case D2D_COMMAND_DRAW_GEOMETRY:
++        {
++            const struct d2d_command_draw_geometry *c = (void *) command;
++            ID2D1DeviceContext6_DrawGeometry(&context->ID2D1DeviceContext6_iface, c->geometry, c->brush, c->stroke_width, c->stroke_style);
++            break;
++        }
++        case D2D_COMMAND_DRAW_RECTANGLE:
++        {
++            const struct d2d_command_draw_rectangle *c = (void *) command;
++            ID2D1DeviceContext6_DrawRectangle(&context->ID2D1DeviceContext6_iface, &c->rect, c->brush, c->stroke_width, c->stroke_style);
++            break;
++        }
++        case D2D_COMMAND_DRAW_BITMAP:
++        {
++            const struct d2d_command_draw_bitmap *c = (void *) command;
++            ID2D1DeviceContext6_DrawBitmap(&context->ID2D1DeviceContext6_iface, c->bitmap, c->dst_rect, c->opacity, c->interpolation_mode, c->src_rect, c->perspective_transform);
++            break;
++        }
++        case D2D_COMMAND_DRAW_IMAGE:
++        {
++            const struct d2d_command_draw_image *c = (void *) command;
++            ID2D1DeviceContext6_DrawImage(&context->ID2D1DeviceContext6_iface, c->image, c->target_offset, c->image_rect, c->interpolation_mode, c->composite_mode);
++            break;
++        }
++        case D2D_COMMAND_FILL_GEOMETRY:
++        {
++            const struct d2d_command_fill_geometry *c = (void *) command;
++            ID2D1DeviceContext6_FillGeometry(&context->ID2D1DeviceContext6_iface, c->geometry, c->brush, c->opacity_brush);
++            break;
++        }
++        case D2D_COMMAND_FILL_RECTANGLE:
++        {
++            const struct d2d_command_fill_rectangle *c = (void *) command;
++            ID2D1DeviceContext6_FillRectangle(&context->ID2D1DeviceContext6_iface, &c->rect, c->brush);
++            break;
++        }
++
 +        default:
 +            FIXME("Unhandled command %u.\n", command->op);
 +    }
-+
-+
 +}
 +
-+void d2d_command_list_draw(ID2D1CommandList *iface, struct d2d_device_context *context,
-+        const D2D1_RECT_F *dst_rect, float opacity, D2D1_INTERPOLATION_MODE interpolation_mode,
-+        const D2D1_RECT_F *src_rect, const D2D1_POINT_2F *offset,
-+        const D2D1_MATRIX_4X4_F *perspective_transform) {
++void d2d_command_list_draw(ID2D1CommandList *iface, struct d2d_device_context *context) {
 +    struct d2d_command_list *command_list = impl_from_ID2D1CommandList(iface);
 +    const void *data, *end;
 +
-+    TRACE("iface %p, context %p, dst_rect %s, opacity %.8e, interpolation_mode %#x, src_rect %s, offset %p, perspective_transform %p.\n",
-+            iface, context, debug_d2d_rect_f(dst_rect), opacity, interpolation_mode, debug_d2d_rect_f(src_rect), offset, perspective_transform);
++    TRACE("iface %p, context %p\n", iface, context);
 +
 +    if (command_list->state != D2D_COMMAND_LIST_STATE_CLOSED) return;
 +
@@ -53,13 +109,8 @@ index 34242ddd88a..11473861078 100644
 +    {
 +        const struct d2d_command *command = data;
 +
-+        d2d_command_list_draw_command(command, context, dst_rect, opacity, interpolation_mode, src_rect, offset, perspective_transform);
++        d2d_command_list_draw_command(command, context);
 +
 +        data = (char *)data + command->size;
 +    }
-+
-+
-+
 +}
-+
-+

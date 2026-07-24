@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/device.c b/dlls/d2d1/device.c
-index b3560f09c12..4585e9ce9b4 100644
+index b3560f09c12..8a42d3aa69b 100644
 --- a/dlls/d2d1/device.c
 +++ b/dlls/d2d1/device.c
 @@ -1281,6 +1281,34 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawBitmap(ID2D1DeviceContext6
@@ -316,15 +316,7 @@ index b3560f09c12..4585e9ce9b4 100644
  
      TRACE("iface %p, image %p, target_offset %s, image_rect %s, interpolation_mode %#x, composite_mode %#x.\n",
              iface, image, debug_d2d_point_2f(target_offset), debug_d2d_rect_f(image_rect),
-@@ -2742,6 +2990,7 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
- 
-     if (composite_mode != D2D1_COMPOSITE_MODE_SOURCE_OVER)
-         FIXME("Unhandled composite mode %#x.\n", composite_mode);
-+    FIXME("Meow %#x.\n", composite_mode);
- 
-     if (SUCCEEDED(ID2D1Image_QueryInterface(image, &IID_ID2D1Bitmap, (void **)&bitmap)))
-     {
-@@ -2750,6 +2999,20 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
+@@ -2750,6 +2998,20 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
          ID2D1Bitmap_Release(bitmap);
          return;
      }
@@ -337,7 +329,7 @@ index b3560f09c12..4585e9ce9b4 100644
 +    }
 +    else if (SUCCEEDED(ID2D1Image_QueryInterface(image, &IID_ID2D1CommandList, (void **)&command_list)))
 +    {
-+        d2d_command_list_draw(command_list, context, NULL, 1.0f, interpolation_mode, image_rect, target_offset, NULL);
++        d2d_command_list_draw(command_list, context);
 +
 +        ID2D1CommandList_Release(command_list);
 +        return;
