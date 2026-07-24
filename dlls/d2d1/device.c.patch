@@ -1,8 +1,43 @@
 diff --git a/dlls/d2d1/device.c b/dlls/d2d1/device.c
-index b3560f09c12..47ec17b4c16 100644
+index b3560f09c12..ad37df2d2cb 100644
 --- a/dlls/d2d1/device.c
 +++ b/dlls/d2d1/device.c
-@@ -2199,13 +2199,196 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateBit
+@@ -1281,6 +1281,34 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawBitmap(ID2D1DeviceContext6
+     }
+ }
+ 
++static void d2d_device_context_draw_effect(struct d2d_device_context *context, ID2D1Effect *effect,
++        const D2D1_RECT_F *dst_rect, float opacity, D2D1_INTERPOLATION_MODE interpolation_mode,
++        const D2D1_RECT_F *src_rect, const D2D1_POINT_2F *offset,
++        const D2D1_MATRIX_4X4_F *perspective_transform)
++{
++    ID2D1Image *input;
++    unsigned int i;
++
++    FIXME("Drawing first input image instead of actual effect. context %p, effect %p, dst_rect %s, opacity %.8e, interpolation_mode %#x, src_rect %s, offset %p, perspective_transform %p.\n",
++            context, effect, debug_d2d_rect_f(dst_rect), opacity, interpolation_mode, debug_d2d_rect_f(src_rect), offset, perspective_transform);
++
++    for (i = 0; i < ID2D1Effect_GetInputCount(effect); ++i)
++    {
++        ID2D1Effect_GetInput(effect, 0, &input);
++        if (input == NULL) continue;
++
++        ID2D1DeviceContext6_DrawImage(&context->ID2D1DeviceContext6_iface, input,
++                offset, src_rect, interpolation_mode,
++                D2D1_COMPOSITE_MODE_SOURCE_OVER);
++
++        ID2D1Image_Release(input);
++        return;
++    }
++
++    FIXME("No input to draw\n");
++
++}
++
+ static void STDMETHODCALLTYPE d2d_device_context_DrawText(ID2D1DeviceContext6 *iface,
+         const WCHAR *string, UINT32 string_len, IDWriteTextFormat *text_format, const D2D1_RECT_F *layout_rect,
+         ID2D1Brush *brush, D2D1_DRAW_TEXT_OPTIONS options, DWRITE_MEASURING_MODE measuring_mode)
+@@ -2199,13 +2227,196 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateBit
      return hr;
  }
  
@@ -114,7 +149,7 @@ index b3560f09c12..47ec17b4c16 100644
 +    struct d2d_color_context *This = impl_from_ID2D1ColorContext1( iface );
 +    FIXME( "stub (%p) \n", This);
 +
-+    return (D2D1_COLOR_SPACE) 0;
++    return (D2D1_COLOR_SPACE) 1;
 +}
 +
 +static UINT32 WINAPI d2d_color_context_GetProfileSize( ID2D1ColorContext1 *iface )
@@ -200,7 +235,7 @@ index b3560f09c12..47ec17b4c16 100644
  }
  
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilename(ID2D1DeviceContext6 *iface,
-@@ -2219,9 +2402,9 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilena
+@@ -2219,9 +2430,9 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilena
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromWicColorContext(ID2D1DeviceContext6 *iface,
          IWICColorContext *wic_color_context, ID2D1ColorContext **color_context)
  {
@@ -212,7 +247,7 @@ index b3560f09c12..47ec17b4c16 100644
  }
  
  static BOOL d2d_bitmap_check_options_with_surface(unsigned int options, unsigned int surface_options)
-@@ -2330,7 +2513,7 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateGra
+@@ -2330,7 +2541,7 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateGra
              iface, stops, stop_count, preinterpolation_space, postinterpolation_space,
              buffer_precision, extend_mode, color_interpolation_mode, gradient);
  
@@ -221,7 +256,15 @@ index b3560f09c12..47ec17b4c16 100644
  }
  
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateImageBrush(ID2D1DeviceContext6 *iface,
-@@ -2427,6 +2610,11 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
+@@ -2387,6 +2598,7 @@ static BOOL STDMETHODCALLTYPE d2d_device_context_IsDxgiFormatSupported(ID2D1Devi
+ {
+     FIXME("iface %p, format %#x stub!\n", iface, format);
+ 
++    // maybe can be implemeted ?
+     return FALSE;
+ }
+ 
+@@ -2427,6 +2639,11 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
      D2D_SIZE_U pixel_size;
      ID2D1Bitmap *bitmap;
      D2D_SIZE_F size;
@@ -233,7 +276,7 @@ index b3560f09c12..47ec17b4c16 100644
  
      TRACE("iface %p, image %p, local_bounds %p.\n", iface, image, local_bounds);
  
-@@ -2456,7 +2644,37 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
+@@ -2456,7 +2673,37 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
  
          return S_OK;
      }
@@ -272,3 +315,33 @@ index b3560f09c12..47ec17b4c16 100644
      {
          FIXME("Unable to get local bounds of image %p.\n", image);
  
+@@ -2719,6 +2966,8 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
+ {
+     struct d2d_device_context *context = impl_from_ID2D1DeviceContext(iface);
+     ID2D1Bitmap *bitmap;
++    ID2D1Effect *effect;
++	ID2D1CommandList *command_list;
+ 
+     TRACE("iface %p, image %p, target_offset %s, image_rect %s, interpolation_mode %#x, composite_mode %#x.\n",
+             iface, image, debug_d2d_point_2f(target_offset), debug_d2d_rect_f(image_rect),
+@@ -2750,6 +2999,20 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
+         ID2D1Bitmap_Release(bitmap);
+         return;
+     }
++    else if (SUCCEEDED(ID2D1Image_QueryInterface(image, &IID_ID2D1Effect, (void **)&effect)))
++    {
++        d2d_device_context_draw_effect(context, effect, NULL, 1.0f, interpolation_mode, image_rect, target_offset, NULL);
++
++        ID2D1Effect_Release(effect);
++        return;
++    }
++    else if (SUCCEEDED(ID2D1Image_QueryInterface(image, &IID_ID2D1CommandList, (void **)&command_list)))
++    {
++        d2d_command_list_draw(command_list, context);
++
++        ID2D1CommandList_Release(command_list);
++        return;
++    }
+ 
+     FIXME("Unhandled image %p.\n", image);
+ }
