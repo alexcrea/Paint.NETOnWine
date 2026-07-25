@@ -164,6 +164,8 @@ elif test "$command" == "createprefix"; then # command
 # Should fail on wow64 as already exist
 ln -s $PWD/prefix/drive_c/windows/regedit.exe $PWD/prefix/drive_c/windows/syswow64/
 
+WINEPREFIX="$PWD/prefix" $PWD/build/install/bin/wine reg add "HKCU\Software\Wine\DllOverrides" /v d3dcompiler_47 /d native /f
+
 ./winetricks arial calibri corefonts
 ./winetricks dxvk
 
