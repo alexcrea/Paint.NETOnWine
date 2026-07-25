@@ -1,8 +1,11 @@
 #!/bin/bash
 
 # Configurable Bits
-patchRepo=Paint.NETOnWine
-sourceRepo=winesrc
+projectName=Paint.NETOnWine
+patchFolder=$projectName
+patchRepo=https://github.com/bluesillybeard/Paint.NETOnWine.git
+sourceFolder=winesrc
+sourceRepo=https://gitlab.winehq.org/wine/wine.git
 
 command=$1
 
@@ -28,11 +31,11 @@ echo "the 'makescripts' command creates 'wine' and 'winetricks' wrappers that au
 
 elif test "$page" == "download"; then # help page
 
-echo "the 'download' commmand downloads wine from the wine gitlab, and downloads the $patchRepo patches"
+echo "the 'download' commmand downloads wine from the wine gitlab, and downloads the $projectName patches"
 
 elif test "$page" == "applypatch"; then # help page
 
-echo "the 'applypatch' command applies the patches from $patchRepo to the WINE source code."
+echo "the 'applypatch' command applies the patches from $projectName to the WINE source code."
 echo "Note, that this will reset any changes you have made to WINE itself!"
 elif test "$page" == "configure"; then # help page
 
@@ -56,8 +59,8 @@ echo "the 'makepatch' command generates the patche files based on the working ch
 echo "This actually deletes the old patches, then iterates over every file in the WINE repo and does the following: "
 echo "    1. check if the file has actually changed, goes to the next file if not"
 echo "    2. use 'git diff' to get a diff (aka patch) of that file compared to the most recent commit "
-echo "    3. put that diff to the corresponding location in the $patchRepo git folder"
-echo "After this command is run, the new patches are in the $patchRepo git folder and may be committed and/or submitted to the repository"
+echo "    3. put that diff to the corresponding location in the $patchFolder git folder"
+echo "After this command is run, the new patches are in the $patchFolder git folder and may be committed and/or submitted to the repository"
 
 else # help page
 
@@ -72,7 +75,7 @@ echo "    configure     - configure a 64bit wine build"
 echo "    configure-wow - configure a 64bit wine build"
 echo "    createprefix  - configure wine prefix"
 echo "    make          - runs make install in order to build wine"
-echo "    makepatch     - create the patches to submit to the $patchRepo repo"
+echo "    makepatch     - create the patches to submit to the $patchFolder repo"
 echo "Also, take a look at the 'wine' and 'winetricks' scripts"
 
 fi # help page
@@ -98,7 +101,7 @@ echo "To update your local copy of the patches repo, run '$0 makepatch'."
 
 elif test "$command" == "makescripts"; then # command
 
-echo $'#!/bin/bash\nWINEPREFIX=\"$PWD/prefix" $PWD/build/install/bin/wine $@' > wine
+echo $'#!/bin/bash\nWINEPREFIX=\"$PWD/prefix" $PWD/build/install/bin/wine $@ /wine' > wine
 chmod +x wine
 
 echo $'#!/bin/bash\nWINE=\"$PWD/build/install/bin/wine\" WINEPREFIX=\"$PWD/prefix" winetricks $@' > winetricks
@@ -109,19 +112,19 @@ chmod +x winecfg
 
 elif test "$command" == "download"; then # command
 
-git clone https://gitlab.winehq.org/wine/wine.git $sourceRepo
-git clone https://github.com/bluesillybeard/Paint.NETOnWine.git $patchRepo
+git clone $sourceRepo $sourceFolder
+git clone $patchRepo $patchFolder
 
 elif test "$command" == "applypatch"; then # command
 
 # Clear out any working changes (this is what makes applypatch a bit dangerous!)
 # There is definitely a better way to also remove untracked files
-git -C $sourceRepo add .
-git -C $sourceRepo checkout -f master
+git -C $sourceFolder add .
+git -C $sourceFolder checkout -f master
 
-find $patchRepo -name "*.patch" -type f | sort | while read -r patchfile; do # loop over patch files
+find $patchFolder -name "*.patch" -type f | sort | while read -r patchfile; do # loop over patch files
 
-git apply --directory $sourceRepo $patchfile
+git apply --directory $sourceFolder $patchfile
 
 done # loop over patch files
 
@@ -129,20 +132,27 @@ elif test "$command" == "configure"; then # command
 
 mkdir -p ./build
 cd build
-../$sourceRepo/configure --enable-win64 --prefix=$PWD/install
+export WINETEST_DEBUG=2
+../$sourceFolder/configure --enable-win64 --prefix=$PWD/install
 cd ..
 
 elif test $command == "configure-wow"; then # command
 
 mkdir -p ./build
 cd build
-../$sourceRepo/configure --enable-archs=i386,x86_64 --prefix=$PWD/install
+../$sourceFolder/configure --enable-archs=i386,x86_64 --prefix=$PWD/install
 cd ..
 
 elif test "$command" == "make"; then # command
 
 cd build
 make install -j$(nproc)
+cd ..
+
+elif test $command == "maketest"; then # command
+
+cd build
+make test -j$(nproc)
 cd ..
 
 elif test "$command" == "createprefix"; then # command
@@ -159,11 +169,11 @@ ln -s $PWD/prefix/drive_c/windows/regedit.exe $PWD/prefix/drive_c/windows/syswow
 
 elif test "$command" == "makepatch"; then # command
 
-git -C $sourceRepo ls-files -mo | sort | while read -r srcfile; do # Loop over wine source files
+git -C $sourceFolder ls-files -mo | sort | while read -r srcfile; do # Loop over wine source files
 
-mkdir -p $(dirname $patchRepo/$srcfile)
-git -C $sourceRepo diff -- $srcfile > $patchRepo/$srcfile.patch
-echo "Created patch for $sourceRepo/$srcfile and placed it in $patchRepo/$srcfile.patch"
+mkdir -p $(dirname $patchFolder/$srcfile)
+git -C $sourceFolder diff -- $srcfile > $patchFolder/$srcfile.patch
+echo "Created patch for $sourceFolder/$srcfile and placed it in $patchFolder/$srcfile.patch"
 
 
 done # Loop over wine source files
