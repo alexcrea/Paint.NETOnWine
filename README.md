@@ -80,14 +80,15 @@ The `makescripts` sub command should have created another script called `wine` i
 
 If you specifically want to use a version of Paint.NET from before 4.3, you will want to install .NET Framework and do a combined 64 and 32 bit WINE build, aka wow64. you are required to use it only if you specifically want to run 4.2 or older. 
 
-Doing a wow64 bit wine build will take a bit longer. it requires you to run `./pdnhelper.sh configure-wow` instead of `./pdnhelper.sh configure` in step 4
-Once you have such a wine build, you can simply run `./winetricks dotnet48` in the same folder you completed the steps. Note that if you accidentally clicked "Install" instead of "Cancel" in step 6, this will not work. In the event you did hit "Install", you can delete the `prefix` folder that the script created, and re-run `./pdnhelper.sh createprefix`.
+Doing a wow64 bit wine build will take a bit longer. it requires you to run `./pdnhelper.sh configure-wow` instead of `./pdnhelper.sh configure` in step 4.
+Once you have such a wine build (finished step 6), you can simply run `./winetricks dotnet48` in the same folder you completed the steps. 
+Note that if you accidentally clicked "Install" instead of "Cancel" in step 6, this will not work. In the event you did hit "Install", you can delete the `prefix` folder that the script created, and re-run `./pdnhelper.sh createprefix`.
 
 WINEs UiAnimation.dll is severely not functional. If you are using Paint.NET 5.2 or newer, you should can append `/disableUIAnimation` to avoid uianimation related issues.
 note: at the time of writting this command line arg do not work, you need to set `"UI/AnimationServiceImplementation" : "Null"` in the AppSettings.json (assuming portable version)
 you likely also want to run with `/useManagedD2D /disableCompositionSwapChain`, these settings are not yet on released build but should be used 
 
-note that the created ./wine script got changed to come with these settings already applied by default
+note that the created ./wine via `./pdnhelper makescripts` got changed to come with these settings already applied
 
 ### Setting up manually
 
