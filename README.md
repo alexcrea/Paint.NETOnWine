@@ -40,6 +40,11 @@ If all you want to do is use Paint.NET, I suggest waiting for an official releas
 I highly suggest using a virtual machine or chroot environment to complete everything here.
 
 The simplest way is to use the helper script: [[link](https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh)]. It has all of the instructions, encoded directly in the form of a CLI interface that does everything* more or less automatically. The script has instructions built-in, however this readme contains a more detailed guide.
+It can also be downloaded via command line:
+```
+curl https://raw.githubusercontent.com/bluesillybeard/Paint.NETOnWine/refs/heads/master/pdnhelper.sh > pdnhelper.sh
+chmod u+x pdnhelper.sh
+```
 
 \* The helper script will not install the required dependencies automatically, as that depends on what distro you are using - and can even be quite involved for certain dependencies.
 
