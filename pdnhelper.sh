@@ -101,7 +101,7 @@ echo "To update your local copy of the patches repo, run '$0 makepatch'."
 
 elif test "$command" == "makescripts"; then # command
 
-echo $'#!/bin/bash\nWINEPREFIX=\"$PWD/prefix" $PWD/build/install/bin/wine $@ /disableUIAnimation /useManagedD2D /disableCompositionSwapChain' > wine
+echo $'#!/bin/bash\nWINEPREFIX=\"$PWD/prefix" $PWD/build/install/bin/wine $@ /wine' > wine
 chmod +x wine
 
 echo $'#!/bin/bash\nWINE=\"$PWD/build/install/bin/wine\" WINEPREFIX=\"$PWD/prefix" winetricks $@' > winetricks
