@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/command_list.c b/dlls/d2d1/command_list.c
-index 34242ddd88a..e6ce998bb61 100644
+index 34242ddd88a..305f1c56abf 100644
 --- a/dlls/d2d1/command_list.c
 +++ b/dlls/d2d1/command_list.c
 @@ -474,8 +474,8 @@ static HRESULT STDMETHODCALLTYPE d2d_command_list_Close(ID2D1CommandList *iface)
@@ -13,3 +13,146 @@ index 34242ddd88a..e6ce998bb61 100644
  
      command_list->state = D2D_COMMAND_LIST_STATE_CLOSED;
  
+@@ -1098,3 +1098,142 @@ void d2d_command_list_fill_opacity_mask(struct d2d_command_list *command_list, c
+     d2d_command_list_write_field(&data, &command->dst_rect, dst_rect, sizeof(*dst_rect));
+     d2d_command_list_write_field(&data, &command->src_rect, src_rect, sizeof(*src_rect));
+ }
++
++void d2d_command_list_draw_command(const struct d2d_command *command, struct d2d_device_context *context) {
++    TRACE("command %p, context %p\n", command, context);
++
++    switch (command->op)
++    {
++        case D2D_COMMAND_SET_ANTIALIAS_MODE:
++        {
++            const struct d2d_command_set_antialias_mode *c = (void *) command;
++            ID2D1DeviceContext6_SetAntialiasMode(&context->ID2D1DeviceContext6_iface, c->mode);
++            break;
++        }
++        case D2D_COMMAND_SET_TAGS:
++        {
++            const struct d2d_command_set_tags *c = (void *) command;
++            ID2D1DeviceContext6_SetTags(&context->ID2D1DeviceContext6_iface, c->tag1, c->tag2);
++            break;
++        }
++        case D2D_COMMAND_SET_TEXT_ANTIALIAS_MODE:
++        {
++            const struct d2d_command_set_text_antialias_mode *c = (void *) command;
++            ID2D1DeviceContext6_SetTextAntialiasMode(&context->ID2D1DeviceContext6_iface, c->mode);
++            break;
++        }
++        case D2D_COMMAND_SET_TEXT_RENDERING_PARAMS:
++        {
++            const struct d2d_command_set_text_rendering_params *c = (void *) command;
++            ID2D1DeviceContext6_SetTextRenderingParams(&context->ID2D1DeviceContext6_iface, c->params);
++            break;
++        }
++        case D2D_COMMAND_SET_TRANSFORM:
++        {
++            const struct d2d_command_set_transform *c = (void *) command;
++            ID2D1DeviceContext6_SetTransform(&context->ID2D1DeviceContext6_iface, &c->transform);
++            break;
++        }
++        case D2D_COMMAND_SET_PRIMITIVE_BLEND:
++        {
++            const struct d2d_command_set_primitive_blend *c = (void *) command;
++            ID2D1DeviceContext6_SetPrimitiveBlend(&context->ID2D1DeviceContext6_iface, c->primitive_blend);
++            break;
++        }
++        case D2D_COMMAND_SET_UNIT_MODE:
++        {
++            const struct d2d_command_set_unit_mode *c = (void *) command;
++            ID2D1DeviceContext6_SetUnitMode(&context->ID2D1DeviceContext6_iface, c->mode);
++            break;
++        }
++        case D2D_COMMAND_CLEAR:
++        {
++            const struct d2d_command_clear *c = (void *) command;
++            ID2D1DeviceContext6_Clear(&context->ID2D1DeviceContext6_iface, &c->color);
++            break;
++        }
++        case D2D_COMMAND_DRAW_GLYPH_RUN:
++        {
++            const struct d2d_command_draw_glyph_run *c = (void *) command;
++            ID2D1DeviceContext6_DrawGlyphRun(&context->ID2D1DeviceContext6_iface, c->origin, &c->run, c->run_desc, c->brush, c->measuring_mode);
++            break;
++        }
++        case D2D_COMMAND_DRAW_LINE:
++        {
++            const struct d2d_command_draw_line *c = (void *) command;
++            ID2D1DeviceContext6_DrawLine(&context->ID2D1DeviceContext6_iface, c->p0, c->p1, c->brush, c->stroke_width, c->stroke_style);
++            break;
++        }
++        case D2D_COMMAND_DRAW_GEOMETRY:
++        {
++            const struct d2d_command_draw_geometry *c = (void *) command;
++            ID2D1DeviceContext6_DrawGeometry(&context->ID2D1DeviceContext6_iface, c->geometry, c->brush, c->stroke_width, c->stroke_style);
++            break;
++        }
++        case D2D_COMMAND_DRAW_RECTANGLE:
++        {
++            const struct d2d_command_draw_rectangle *c = (void *) command;
++            ID2D1DeviceContext6_DrawRectangle(&context->ID2D1DeviceContext6_iface, &c->rect, c->brush, c->stroke_width, c->stroke_style);
++            break;
++        }
++        case D2D_COMMAND_DRAW_BITMAP:
++        {
++            const struct d2d_command_draw_bitmap *c = (void *) command;
++            ID2D1DeviceContext6_DrawBitmap(&context->ID2D1DeviceContext6_iface, c->bitmap, c->dst_rect, c->opacity, c->interpolation_mode, c->src_rect, c->perspective_transform);
++            break;
++        }
++        case D2D_COMMAND_DRAW_IMAGE:
++        {
++            const struct d2d_command_draw_image *c = (void *) command;
++            ID2D1DeviceContext6_DrawImage(&context->ID2D1DeviceContext6_iface, c->image, c->target_offset, c->image_rect, c->interpolation_mode, c->composite_mode);
++            break;
++        }
++        case D2D_COMMAND_FILL_MESH:
++        {
++            const struct d2d_command_fill_mesh *c = (void *) command;
++            ID2D1DeviceContext6_FillMesh(&context->ID2D1DeviceContext6_iface, c->mesh, c->brush);
++            break;
++        }
++        case D2D_COMMAND_FILL_OPACITY_MASK:
++        {
++            const struct d2d_command_fill_opacity_mask *c = (void *) command;
++            ID2D1DeviceContext6_FillOpacityMask(&context->ID2D1DeviceContext6_iface, c->bitmap, c->brush, c->dst_rect, c->src_rect);
++            break;
++        }
++        case D2D_COMMAND_FILL_GEOMETRY:
++        {
++            const struct d2d_command_fill_geometry *c = (void *) command;
++            ID2D1DeviceContext6_FillGeometry(&context->ID2D1DeviceContext6_iface, c->geometry, c->brush, c->opacity_brush);
++            break;
++        }
++        case D2D_COMMAND_FILL_RECTANGLE:
++        {
++            const struct d2d_command_fill_rectangle *c = (void *) command;
++            ID2D1DeviceContext6_FillRectangle(&context->ID2D1DeviceContext6_iface, &c->rect, c->brush);
++            break;
++        }
++
++        default:
++            FIXME("Unhandled command %u.\n", command->op);
++    }
++}
++
++void d2d_command_list_draw(ID2D1CommandList *iface, struct d2d_device_context *context) {
++    struct d2d_command_list *command_list = impl_from_ID2D1CommandList(iface);
++    const void *data, *end;
++
++    TRACE("iface %p, context %p\n", iface, context);
++
++    if (command_list->state != D2D_COMMAND_LIST_STATE_CLOSED) return;
++
++    data = command_list->data;
++    end = (char *)command_list->data + command_list->size;
++    while (data < end)
++    {
++        const struct d2d_command *command = data;
++
++        d2d_command_list_draw_command(command, context);
++
++        data = (char *)data + command->size;
++    }
++}

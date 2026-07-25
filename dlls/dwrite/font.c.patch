@@ -1,5 +1,5 @@
 diff --git a/dlls/dwrite/font.c b/dlls/dwrite/font.c
-index f207bade10e..403002d2999 100644
+index f207bade10e..8bb937a07a0 100644
 --- a/dlls/dwrite/font.c
 +++ b/dlls/dwrite/font.c
 @@ -5831,6 +5831,29 @@ static ULONG WINAPI glyphrunanalysis_Release(IDWriteGlyphRunAnalysis *iface)
