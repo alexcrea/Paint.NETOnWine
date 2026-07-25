@@ -59,6 +59,7 @@ The simplest way is to use the helper script: [[link](https://github.com/bluesil
 Assuming you have done everything correctly, now you may run each of the script commands. Note that the script must be run from the reasonable location such as `~/Projects/pdnonwine`, since it uses $PWD for all file paths. Run the commands in this order:
 1. `./pdnhelper.sh download`
     - This will download the WINE source code as well as these patches
+    - Note that you can change sources repo with the first lines of the pdnhelper
 2. `./pdnhelper.sh makescripts`
     - This will create a handful of useful scripts. You may skip this step.
 3. `./pdnhelper.sh applypatch`
@@ -78,9 +79,16 @@ The `makescripts` sub command should have created another script called `wine` i
 
 ### Other notes
 
-If you specifically want to use a version of Paint.NET from before 4.3, you will want to install .NET Framework and do a combined 64 and 32 bit WINE build. ONLY DO THIS IF YOU SPECIFICALLY WANT TO RUN 4.2 OR OLDER. Doing a 32+64 bit wine build is absolute pure pain, I would suggest skipping the `configure` and `make` steps and building wine manually instead. The WINE building guide can be found here: https://gitlab.winehq.org/wine/wine/-/wikis/Building-Wine. Once you have such a wine build, you can simply run `./winetricks dotnet48` in the same folder you completed the steps. Note that if you accidentally clicked "Install" instead of "Cancel" in step 6, this will not work. In the event you did hit "Install", you can delete the `prefix` folder that the script created, and re-run `./pdnhelper.sh createprefix`.
+If you specifically want to use a version of Paint.NET from before 4.3, you will want to install .NET Framework and do a combined 64 and 32 bit WINE build, aka wow64. you are required to use it only if you specifically want to run 4.2 or older. 
 
-WINEs UiAnimation.dll is severely not functional. If you are using Paint.NET 5.2 or newer, you should put `"UI/AnimationServiceImplementation" : "Null"` to the AppSettings.json (assuming portable version) to avoid uianimation related issues.
+Doing a wow64 bit wine build will take a bit longer. it requires you to run `./pdnhelper.sh configure-wow` instead of `./pdnhelper.sh configure` in step 4.
+Once you have such a wine build (finished step 6), you can simply run `./winetricks dotnet48` in the same folder you completed the steps. 
+Note that if you accidentally clicked "Install" instead of "Cancel" in step 6, this will not work. In the event you did hit "Install", you can delete the `prefix` folder that the script created, and re-run `./pdnhelper.sh createprefix`.
+
+WINEs UiAnimation.dll is severely not functional. If you are using Paint.NET 5.2 or newer, you should can append the `/wine` command line argument.
+at the time of writing, `/wine` apply the following command line arguments: `/useManagedD2D /disableComposition /disableUIAnimation /disableWin11DisplayInformation`
+
+note that the created ./wine via `./pdnhelper makescripts` got changed to come with these settings already applied
 
 ### Setting up manually
 

@@ -41,9 +41,9 @@ index 80c147638cd..d26e11cf356 100644
  
      if (!(hdc = GetDC(NULL)))
      {
-+    	wined2d_mutex_lock(factory);
++       wined2d_mutex_lock(factory);
          factory->dpi_x = factory->dpi_y = 96.0f;
-+    	wined2d_mutex_unlock(factory);
++       wined2d_mutex_unlock(factory);
          return E_FAIL;
      }
  
