@@ -90,6 +90,8 @@ at the time of writing, `/wine` apply the following command line arguments: `/us
 
 note that the created ./wine via `./pdnhelper makescripts` got changed to come with these settings already applied
 
+There is a dll override of d3dcompiler_47 by default creating the prefix. if you wish to run older version you can run `./winecfg` and disable it
+
 ### Setting up manually
 
 If for some reason you don't want to use the helper script, the helper script itself is a better guide than I care to write here. So go ahead and read the source code of the script itself, which is linked here: https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh. It is only 172 or so lines of code, and half of it is just help messages for the various commands.
