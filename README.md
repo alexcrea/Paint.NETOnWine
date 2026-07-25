@@ -59,6 +59,7 @@ The simplest way is to use the helper script: [[link](https://github.com/bluesil
 Assuming you have done everything correctly, now you may run each of the script commands. Note that the script must be run from the reasonable location such as `~/Projects/pdnonwine`, since it uses $PWD for all file paths. Run the commands in this order:
 1. `./pdnhelper.sh download`
     - This will download the WINE source code as well as these patches
+    - Note that you can change sources repo with the first lines of the pdnhelper
 2. `./pdnhelper.sh makescripts`
     - This will create a handful of useful scripts. You may skip this step.
 3. `./pdnhelper.sh applypatch`
