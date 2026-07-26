@@ -46,9 +46,11 @@ It can also be downloaded via command line:
 
 ### Setting up using the helper script
 
-1. Download [the helper script](https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh). It is in this repository since that seemed like a decent place to put it, but it is meant to be downloaded by itself.
-You should likely be in a resonable location, `~/Projects/pdnonwine/` is a reasonable location for example.
+1. Download [the helper script](https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh). It is in this repository since that seemed like a decent place to put it, but it is meant to be downloaded by itself. \
+You should likely be in a resonable location, `~/Projects/pdnonwine/` is a reasonable location for example. \
 Running the script will create a bunch of files and folder in that location.
+
+Here is an easy way to download the script via command line
 ```
 curl https://raw.githubusercontent.com/bluesillybeard/Paint.NETOnWine/refs/heads/master/pdnhelper.sh > pdnhelper.sh
 chmod u+x pdnhelper.sh
@@ -81,7 +83,7 @@ Assuming you have done everything correctly, now you may run each of the script 
 
 Now, WINE has been fully set up to attempt to run Paint.NET. The installers are not a priority, so I suggest downloading the portable version and putting it somewhere convenient. Note that the portable release zip uses back slashes instead of forward slashes for the file paths, which will mess up certain zip extraction software on Linux. You may have to do some manual clean-up to get the files in the right folders.
 
-The `makescripts` sub command should have created another script called `wine` in the directory you ran it from. This is a wrapper for the version of wine that was just build, so you can simply type `./wine paintdotnet.exe` instead of `WINEPREFIX=$PWD/prefix $PWD/build/install/bin/wine paintdotnet.exe`.
+The `makescripts` sub command should have created another script called `wine` in the directory you ran it from. This is a wrapper for the version of wine that was just build, so you can simply type `./wine paintdotnet.exe` instead of `WINEPREFIX=$PWD/prefix $PWD/build/install/bin/wine paintdotnet.exe /wine`.
 
 ### Other notes
 
