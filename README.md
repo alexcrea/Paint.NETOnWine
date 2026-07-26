@@ -41,24 +41,25 @@ I highly suggest using a virtual machine or chroot environment to complete every
 
 The simplest way is to use the helper script: [[link](https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh)]. It has all of the instructions, encoded directly in the form of a CLI interface that does everything* more or less automatically. The script has instructions built-in, however this readme contains a more detailed guide.
 It can also be downloaded via command line:
-```
-curl https://raw.githubusercontent.com/bluesillybeard/Paint.NETOnWine/refs/heads/master/pdnhelper.sh > pdnhelper.sh
-chmod u+x pdnhelper.sh
-```
 
 \* The helper script will not install the required dependencies automatically, as that depends on what distro you are using - and can even be quite involved for certain dependencies.
 
 ### Setting up using the helper script
 
-1. Download the helper script. It is in this repository since that seemed like a decent place to put it, but it is meant to be downloaded by itself. Here is a link directly to the file on the master branch: https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh.
-2. Place the helper script in a reasonable location. `~/Projects/pdnonwine/` is a reasonable location. Note that it will download and create a bunch of files and folders in that location.
-3. Install the required dependencies to build wine, which are listed on the page linked here: https://gitlab.winehq.org/wine/wine/-/wikis/Building-Wine
+1. Download [the helper script](https://github.com/bluesillybeard/Paint.NETOnWine/blob/master/pdnhelper.sh). It is in this repository since that seemed like a decent place to put it, but it is meant to be downloaded by itself.
+You should likely be in a resonable location, `~/Projects/pdnonwine/` is a reasonable location for example.
+Running the script will create a bunch of files and folder in that location.
+```
+curl https://raw.githubusercontent.com/bluesillybeard/Paint.NETOnWine/refs/heads/master/pdnhelper.sh > pdnhelper.sh
+chmod u+x pdnhelper.sh
+```
+2. Install the required dependencies to build wine, which are listed on the page linked here: https://gitlab.winehq.org/wine/wine/-/wikis/Building-Wine
     - IMPORTANT: You do not need to install all of them, in fact quite a lot of them are not required
     - NOTE: You may skip this step if you want to repeatedly run the configure script and install the missing dependencies one at a time. The WINE configure script will error and list out the missing dependency. This is generally a bad experience though.
-4. Install `cabextract`. On Debian it's available as a plain apt package: `sudo apt install cabextract`. Your favorite distro likely provides it as a standard package.
-5. Install `winetricks`. Your favorite distro may or may not provide it as a package, so here is a link to its repo: https://github.com/Winetricks/winetricks
-6. Install `git` if you don't already have it
-7. You will also need a MINGW cross compiler. On debian this can be installed via `sudo apt install gcc-mingw-w64 g++-mingw-w64`
+3. Install `cabextract`. On Debian it's available as a plain apt package: `sudo apt install cabextract`. Your favorite distro likely provides it as a standard package.
+4. Install `winetricks`. Your favorite distro may or may not provide it as a package, so here is a link to its repo: https://github.com/Winetricks/winetricks
+5. Install `git` if you don't already have it
+6. You will also need a MINGW cross compiler. On debian this can be installed via `sudo apt install gcc-mingw-w64 g++-mingw-w64`
     - This is not listed in the building wine guide, for whatever reason
 
 Assuming you have done everything correctly, now you may run each of the script commands. Note that the script must be run from the reasonable location such as `~/Projects/pdnonwine`, since it uses $PWD for all file paths. Run the commands in this order:
