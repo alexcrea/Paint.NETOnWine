@@ -1,8 +1,8 @@
 diff --git a/dlls/windowscodecs/info.c b/dlls/windowscodecs/info.c
-index 4063196e27c..ed2f67fefd9 100644
+index 4063196e27c..736610f918c 100644
 --- a/dlls/windowscodecs/info.c
 +++ b/dlls/windowscodecs/info.c
-@@ -1331,11 +1331,44 @@ static HRESULT WINAPI PixelFormatInfo_GetFormatGUID(IWICPixelFormatInfo2 *iface,
+@@ -1331,10 +1331,51 @@ static HRESULT WINAPI PixelFormatInfo_GetFormatGUID(IWICPixelFormatInfo2 *iface,
      return S_OK;
  }
  
@@ -39,12 +39,18 @@ index 4063196e27c..ed2f67fefd9 100644
      IWICColorContext **ppIColorContext)
  {
 +    PixelFormatInfo *This = impl_from_IWICPixelFormatInfo2(iface);
++    GUID pFormat;
++
      FIXME("(%p,%p): stub\n", iface, ppIColorContext);
--    return E_NOTIMPL;
++
++    //PixelFormatInfo_GetFormatGUID(iface, &pFormat);
++    //TODO profile from guid instead of defaulting to temp profile like under this
++
 +    //This->
-+    ColorContext_Create(ppIColorContext);
-+    return (*ppIColorContext)->lpVtbl->InitializeFromMemory(*ppIColorContext,TEMP_COLOR_PROFILE, sizeof(TEMP_COLOR_PROFILE));
++    //ColorContext_Create(ppIColorContext);
++    //return IWICColorContext_InitializeFromMemory(*ppIColorContext,TEMP_COLOR_PROFILE, sizeof(TEMP_COLOR_PROFILE));
 +    //return S_OK;
++
+     return E_NOTIMPL;
  }
  
- static HRESULT WINAPI PixelFormatInfo_GetBitsPerPixel(IWICPixelFormatInfo2 *iface,
