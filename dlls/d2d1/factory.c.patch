@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/factory.c b/dlls/d2d1/factory.c
-index 80c147638cd..d26e11cf356 100644
+index 80c147638cd..6d3ec71256b 100644
 --- a/dlls/d2d1/factory.c
 +++ b/dlls/d2d1/factory.c
 @@ -55,12 +55,16 @@ static BOOL WINAPI d2d_factory_builtins_initonce(INIT_ONCE *once, void *param, v
