@@ -1,0 +1,52 @@
+diff --git a/dlls/windowscodecs/metadatahandler.c b/dlls/windowscodecs/metadatahandler.c
+index c27a055b60b..be3c2820951 100644
+--- a/dlls/windowscodecs/metadatahandler.c
++++ b/dlls/windowscodecs/metadatahandler.c
+@@ -1733,3 +1733,47 @@ HRESULT App1MetadataWriter_CreateInstance(REFIID iid, void **ppv)
+ {
+     return MetadataReader_Create(&App1MetadataWriter_Vtbl, iid, ppv);
+ }
++
++HRESULT WINAPI WICSerializeMetadataContent(REFGUID format, IWICMetadataWriter *writer, UINT options, IStream *stream)
++{
++    HRESULT hr;
++    MetadataHandler *handler = impl_from_IWICMetadataWriter(writer);
++    char buffer[1024];
++    ULONG count, count2;
++    LARGE_INTEGER in = {{0}};
++    ULARGE_INTEGER reset;
++
++    TRACE("%s,%p,%u,%p\n", wine_dbgstr_guid(format), writer, options, stream);
++
++    if(options != 0)
++    {
++        FIXME("Unimplemented for option other than default.\n");
++        return E_NOTIMPL;
++    }
++
++    if(FAILED(hr = IStream_Seek(handler->stream, in, STREAM_SEEK_CUR, &reset)))
++        return hr;
++
++    if(FAILED(hr = IStream_Seek(handler->stream, in, STREAM_SEEK_SET, NULL)))
++        return hr;
++
++    while (true)
++    {
++        if(FAILED(hr = IStream_Read(handler->stream, &buffer, sizeof(buffer), &count)))
++            break;
++        if(count == 0) break;
++
++        if(FAILED(hr = IStream_Write(stream, &buffer, count, &count2)))
++            break;
++
++        if(count != count2)
++        {
++            WARN("Did not write the correct amount amount of bytes on the destination stream. (%lu/%lu)\n", count2, count);
++            hr = E_NOT_VALID_STATE;
++            break;
++        }
++    }
++
++    in.QuadPart = reset.QuadPart;
++    return IStream_Seek(handler->stream, in, STREAM_SEEK_SET, NULL);
++}
