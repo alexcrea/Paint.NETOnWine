@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/device.c b/dlls/d2d1/device.c
-index b3560f09c12..5b2bceb272c 100644
+index 552d6d4c24c..c2fe6c044e9 100644
 --- a/dlls/d2d1/device.c
 +++ b/dlls/d2d1/device.c
 @@ -18,6 +18,7 @@
@@ -45,7 +45,7 @@ index b3560f09c12..5b2bceb272c 100644
  static void STDMETHODCALLTYPE d2d_device_context_DrawText(ID2D1DeviceContext6 *iface,
          const WCHAR *string, UINT32 string_len, IDWriteTextFormat *text_format, const D2D1_RECT_F *layout_rect,
          ID2D1Brush *brush, D2D1_DRAW_TEXT_OPTIONS options, DWRITE_MEASURING_MODE measuring_mode)
-@@ -2199,13 +2228,326 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateBit
+@@ -2199,13 +2228,327 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateBit
      return hr;
  }
  
@@ -58,6 +58,7 @@ index b3560f09c12..5b2bceb272c 100644
 +
 +//FIXME
 +//this is from https://github.com/saucecontrol/Compact-ICC-Profiles?tab=readme-ov-file and NEEDS TO BE REPLACED WITH REAL CODE
++//Duplicated inside windowscodecs/info.c
 +//This is sRGB-v2-magic.icc
 +static BYTE SRGB_ICC_COLOR_PROFILE[] = {
 +    0x00, 0x00, 0x02, 0xe0, 0x6c, 0x63, 0x6d, 0x73, 0x02, 0x10, 0x00, 0x00, 0x6d, 0x6e, 0x74, 0x72,
@@ -374,7 +375,7 @@ index b3560f09c12..5b2bceb272c 100644
  }
  
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilename(ID2D1DeviceContext6 *iface,
-@@ -2219,8 +2561,45 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilena
+@@ -2219,8 +2562,45 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromFilena
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateColorContextFromWicColorContext(ID2D1DeviceContext6 *iface,
          IWICColorContext *wic_color_context, ID2D1ColorContext **color_context)
  {
@@ -421,7 +422,7 @@ index b3560f09c12..5b2bceb272c 100644
      return E_NOTIMPL;
  }
  
-@@ -2330,7 +2709,7 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateGra
+@@ -2330,7 +2710,7 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_ID2D1DeviceContext_CreateGra
              iface, stops, stop_count, preinterpolation_space, postinterpolation_space,
              buffer_precision, extend_mode, color_interpolation_mode, gradient);
  
@@ -430,7 +431,7 @@ index b3560f09c12..5b2bceb272c 100644
  }
  
  static HRESULT STDMETHODCALLTYPE d2d_device_context_CreateImageBrush(ID2D1DeviceContext6 *iface,
-@@ -2387,6 +2766,7 @@ static BOOL STDMETHODCALLTYPE d2d_device_context_IsDxgiFormatSupported(ID2D1Devi
+@@ -2387,6 +2767,7 @@ static BOOL STDMETHODCALLTYPE d2d_device_context_IsDxgiFormatSupported(ID2D1Devi
  {
      FIXME("iface %p, format %#x stub!\n", iface, format);
  
@@ -438,7 +439,7 @@ index b3560f09c12..5b2bceb272c 100644
      return FALSE;
  }
  
-@@ -2427,6 +2807,11 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
+@@ -2427,6 +2808,11 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
      D2D_SIZE_U pixel_size;
      ID2D1Bitmap *bitmap;
      D2D_SIZE_F size;
@@ -450,7 +451,7 @@ index b3560f09c12..5b2bceb272c 100644
  
      TRACE("iface %p, image %p, local_bounds %p.\n", iface, image, local_bounds);
  
-@@ -2456,7 +2841,37 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
+@@ -2456,7 +2842,37 @@ static HRESULT STDMETHODCALLTYPE d2d_device_context_GetImageLocalBounds(ID2D1Dev
  
          return S_OK;
      }
@@ -489,7 +490,7 @@ index b3560f09c12..5b2bceb272c 100644
      {
          FIXME("Unable to get local bounds of image %p.\n", image);
  
-@@ -2719,6 +3134,8 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
+@@ -2719,6 +3135,8 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
  {
      struct d2d_device_context *context = impl_from_ID2D1DeviceContext(iface);
      ID2D1Bitmap *bitmap;
@@ -498,7 +499,7 @@ index b3560f09c12..5b2bceb272c 100644
  
      TRACE("iface %p, image %p, target_offset %s, image_rect %s, interpolation_mode %#x, composite_mode %#x.\n",
              iface, image, debug_d2d_point_2f(target_offset), debug_d2d_rect_f(image_rect),
-@@ -2750,6 +3167,20 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
+@@ -2750,6 +3168,20 @@ static void STDMETHODCALLTYPE d2d_device_context_DrawImage(ID2D1DeviceContext6 *
          ID2D1Bitmap_Release(bitmap);
          return;
      }
