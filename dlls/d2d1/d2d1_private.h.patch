@@ -1,5 +1,5 @@
 diff --git a/dlls/d2d1/d2d1_private.h b/dlls/d2d1/d2d1_private.h
-index 9c78aaf92e2..de6473b6172 100644
+index 9c78aaf92e2..ef5007bc111 100644
 --- a/dlls/d2d1/d2d1_private.h
 +++ b/dlls/d2d1/d2d1_private.h
 @@ -455,6 +455,8 @@ HRESULT d2d_bitmap_create(struct d2d_device_context *context, D2D1_SIZE_U size,
@@ -19,11 +19,24 @@ index 9c78aaf92e2..de6473b6172 100644
  
  static inline BOOL d2d_array_reserve(void **elements, size_t *capacity, size_t count, size_t size)
  {
-@@ -1094,4 +1097,7 @@ static inline const char *debug_d2d_ellipse(const D2D1_ELLIPSE *ellipse)
+@@ -1094,4 +1097,20 @@ static inline const char *debug_d2d_ellipse(const D2D1_ELLIPSE *ellipse)
              ellipse->point.x, ellipse->point.y, ellipse->radiusX, ellipse->radiusY);
  }
  
 +void WINAPI wined2d_mutex_lock(struct d2d_factory *);
 +void WINAPI wined2d_mutex_unlock(struct d2d_factory *);
++
++struct d2d_color_context
++{
++    ID2D1ColorContext1 ID2D1ColorContext1_iface;
++    LONG ref;
++
++    BYTE *profile;
++    int size;
++    ID2D1Factory *factory;
++    D2D1_COLOR_SPACE space;
++    D2D1_COLOR_CONTEXT_TYPE type;
++    DXGI_COLOR_SPACE_TYPE dxgi_space;
++};
 +
  #endif /* __WINE_D2D1_PRIVATE_H */
